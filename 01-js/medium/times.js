@@ -9,5 +9,18 @@ There is no automated test for this one, this is more for you to understand time
 */
 
 function calculateTime(n) {
-    return 0.01;
+    let sum=0;
+    let startTime=Date.now();
+    for(let i=1;i<=n;i++)
+    {
+        sum+=i;
+    }
+    let endTime=Date.now();
+    console.log(`Calcualte sum from 1 ${n} took ${(endTime-startTime)/1000} seconds`)
 }
+
+calculateTime(100);
+calculateTime(100000);
+calculateTime(1000000000);
+calculateTime(10000000000);
+calculateTime(100000000000);
