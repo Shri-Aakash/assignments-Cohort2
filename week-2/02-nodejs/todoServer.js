@@ -43,7 +43,76 @@
   const bodyParser = require('body-parser');
   
   const app = express();
+  const MAX=1e5;
+  const MIN=1;
   
   app.use(bodyParser.json());
+
+  let todos=[];
+
+  app.get('/todos',(req,res)=>{
+    res.status(200).json(todos);
+  });
+
+  app.get('/todos/:id',(req,res)=>{
+    let taskId=parseInt(req.params.id);
+    let task=todos.find(t=>t.id===taskId);
+    if(!task){
+      res.status(404).send();
+    }
+    else{
+      res.status(200).json(task);
+    }
+  });
+
+  app.post('/todos',(req,res)=>{
+    let body=req.body;
+    let taskId=generateRandomId();
+    let task={id:taskId};
+    let properties=Object.getOwnPropertyNames(body);
+    properties.forEach((x)=>{
+      task[x]=body[x];
+    });
+    todos.push(task);
+    res.status(201).json({
+      "id":taskId
+    });
+  });
+
+  app.put('/todos/:id',(req,res)=>{
+    let body=req.body;
+    let task=todos.find(t=>t.id===parseInt(req.params.id));
+    if(task){
+      let properties=Object.getOwnPropertyNames(body);
+      properties.forEach((x)=>{
+      task[x]=body[x];
+    });
+    res.status(200).send();
+    }
+    else{
+      res.status(404).send();
+    }
+  });
+
+  app.delete('/todos/:id',(req,res)=>{
+    let taskId=parseInt(req.params.id);
+    let taskIndex=todos.findIndex(t=>t.id==taskId);
+    if(taskIndex===-1){
+      res.status(404).send();
+    }
+    else{
+      todos.splice(taskIndex,1);
+      res.status(200).send();
+    }
+  });
+
+  app.all('*',(req,res)=>{
+    res.status(404).send("Route not found");
+  });
+  
+  function generateRandomId(){
+    return Math.floor(Math.random()*(MAX-MIN+1)+MIN);
+  }
+
   
   module.exports = app;
